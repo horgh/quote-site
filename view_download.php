@@ -8,18 +8,20 @@
 <p><a href="<?= htmlspecialchars($db_file); ?>">Download the database dump</a>
 (Last updated <?= htmlspecialchars($db_mtime); ?>) </p>
 
+
 <h2>Quote bot</h2>
 
-<p>The quote bot script is <a
+<p>The quote bot IRC script is <a
 href="https://github.com/horgh/irssi-scripts/blob/master/sqlquote.pl">here</a>.
 It's an Irssi Perl script.</p>
 
+
 <h2>Quote site</h2>
 
-<p>Here is an archive of the quote site. It is a PHP application.</p>
+<p>The website itself is <a href="https://github.com/horgh/quote-site">here</a>.
+It is a PHP application.</p>
 
-<p><a href="<?= htmlspecialchars($site_file); ?>">Download the quote site</a>
-(Last updated <?= htmlspecialchars($site_file_mtime); ?>)</p>
 
-<p>The bot that notifies when a quote gets added is <a
+<h2>Notification bot</h2>
+<p>The bot that notifies IRC when a quote gets added is <a
 href="https://github.com/horgh/irc/tree/master/ircnotify">this</a>.</p>

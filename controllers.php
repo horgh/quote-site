@@ -244,21 +244,10 @@ function _request_download()
 
 	$db_mtime = strftime("%F %T %Z", $db_sbuf[9]);
 
-	$site_file = 'files/quotesite.tar.gz';
-	$site_file_sbuf = @stat($site_file);
-	if (false === $site_file_sbuf) {
-		echo "Unable to stat file $site_file";
-		return;
-	}
-
-	$site_file_mtime = strftime("%F %T %Z", $site_file_sbuf[9]);
-
 	_show_template('view_download', array(
 		'page_title'      => 'Download',
 		'db_file'         => $db_file,
 		'db_mtime'        => $db_mtime,
-		'site_file'       => $site_file,
-		'site_file_mtime' => $site_file_mtime,
 	));
 }
 
