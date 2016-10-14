@@ -1,0 +1,26 @@
+.error {
+  color: red;
+}
+
+.success {
+  color: green;
+}
+
+.adder .name {
+  min-width: 200px;
+  display: inline-block;
+}
+
+.adder .count {
+  display: inline-block;
+}
+
+.quote {
+	margin: 0 0 25px 0;
+	padding: 5px;
+}
+
+.quote_text {
+	margin: 5px 0 0 0;
+	font-family: monospace;
+}
