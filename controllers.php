@@ -70,7 +70,7 @@ function _request_add_quote()
 	}
 
 	_add_flash_success("Please confirm you want to add the quote as it now appears.");
-	_save_in_session('quote', $quote);
+	_save_in_session('quote', $quote_clean);
 	_redirect('index.php', array('added_by' => $added_by));
 }
 
