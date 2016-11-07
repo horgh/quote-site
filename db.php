@@ -327,7 +327,7 @@ function _get_latest_quotes()
 	return $quotes;
 }
 
-function _get_quotes_missing()
+function _get_quotes_missing_adder()
 {
 	// Choosing to order by id descending with the idea that
 	// filling in more recent ones is easier
@@ -338,7 +338,28 @@ function _get_quotes_missing()
 		create_time AT TIME ZONE 'America/Vancouver',
 		added_by
 		FROM quote
-		WHERE added_by IS NULL OR create_time IS NULL
+		WHERE added_by IS NULL
+		ORDER BY 1 DESC
+		LIMIT 20
+";
+
+	$quotes = _db_fetch_quotes($sql, array());
+
+	return $quotes;
+}
+
+function _get_quotes_missing_date()
+{
+	// Choosing to order by id descending with the idea that
+	// filling in more recent ones is easier
+	$sql = "
+		SELECT
+		id,
+		quote,
+		create_time AT TIME ZONE 'America/Vancouver',
+		added_by
+		FROM quote
+		WHERE create_time IS NULL
 		ORDER BY 1 DESC
 		LIMIT 20
 ";
@@ -366,7 +387,7 @@ function _count_quotes()
 	return 'Count not found';
 }
 
-function _count_missing_quotes()
+function _count_quotes_missing_adder()
 {
 	$dbh = _connect_to_database();
 	if (!$dbh) {
@@ -376,8 +397,29 @@ function _count_missing_quotes()
 	$sql = "
 SELECT COUNT(1)
 FROM quote
-WHERE added_by IS NULL OR
-create_time IS NULL
+WHERE added_by IS NULL
+";
+
+	$rows = $dbh->query($sql, PDO::FETCH_NUM);
+
+	foreach ($rows as $row) {
+		return intval($row[0]);
+	}
+
+	return 'Count not found';
+}
+
+function _count_quotes_missing_date()
+{
+	$dbh = _connect_to_database();
+	if (!$dbh) {
+		return "cannot connect to database";
+	}
+
+	$sql = "
+SELECT COUNT(1)
+FROM quote
+WHERE create_time IS NULL
 ";
 
 	$rows = $dbh->query($sql, PDO::FETCH_NUM);

@@ -154,9 +154,9 @@ function _request_get_popular_quotes()
 	);
 }
 
-function _request_get_missing()
+function _request_get_missing_adder()
 {
-	$quotes = _get_quotes_missing();
+	$quotes = _get_quotes_missing_adder();
 	if (is_string($quotes)) {
 		echo $quotes;
 		return;
@@ -170,14 +170,44 @@ function _request_get_missing()
 		return;
 	}
 
-	$total_missing = _count_missing_quotes();
+	$total_missing = _count_quotes_missing_adder();
 	if (!is_int($total_missing)) {
 		echo $total_missing;
 		return;
 	}
 
 	_show_template('view_missing', array(
-		'page_title'    => 'Quotes missing information',
+		'page_title'    => 'Quotes missing adder',
+		'quotes'        => $quotes,
+		'total_quotes'  => $total_quotes,
+		'total_missing' => $total_missing,
+	));
+}
+
+function _request_get_missing_date()
+{
+	$quotes = _get_quotes_missing_date();
+	if (is_string($quotes)) {
+		echo $quotes;
+		return;
+	}
+
+	$missing_count = count($quotes);
+
+	$total_quotes = _count_quotes();
+	if (!is_int($total_quotes)) {
+		echo $total_quotes;
+		return;
+	}
+
+	$total_missing = _count_quotes_missing_date();
+	if (!is_int($total_missing)) {
+		echo $total_missing;
+		return;
+	}
+
+	_show_template('view_missing', array(
+		'page_title'    => 'Quotes missing date',
 		'quotes'        => $quotes,
 		'total_quotes'  => $total_quotes,
 		'total_missing' => $total_missing,
@@ -361,4 +391,9 @@ function _request_view_add_quote()
 		'quote'      => $quote,
 		'added_by'   => $added_by,
 	));
+}
+
+function _request_invalid()
+{
+	echo "Invalid request.";
 }

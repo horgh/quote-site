@@ -2,8 +2,8 @@
 
 <p>There are
 <?= htmlspecialchars($total_missing); ?>/<?= htmlspecialchars($total_quotes); ?>
-(<?= htmlspecialchars(sprintf('%.2f', ($total_missing/$total_quotes*100))); ?>%)
-quotes missing information.</p>
+ (<?= htmlspecialchars(sprintf('%.2f', ($total_missing/$total_quotes*100))); ?>%)
+quotes missing this information.</p>
 
 <p>Here are <?= htmlspecialchars(count($quotes)); ?> of them.</p>
 

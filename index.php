@@ -36,8 +36,12 @@ function main()
 			_request_get_popular_quotes();
 			break;
 
-		case 'missing':
-			_request_get_missing();
+		case 'missing-adder':
+			_request_get_missing_adder();
+			break;
+
+		case 'missing-date':
+			_request_get_missing_date();
 			break;
 
 		case 'random-quotes':
@@ -61,7 +65,7 @@ function main()
 			break;
 
 		default:
-			_request_view_add_quote();
+			_request_invalid();
 			break;
 	}
 }
