@@ -20,6 +20,10 @@ function main()
 	$action = array_key_exists('action', $_POST) ? $_POST['action'] : $action;
 
 	switch ($action) {
+		case '':
+			_request_view_add_quote();
+			break;
+
 		case 'add_quote':
 			_request_add_quote();
 			break;
