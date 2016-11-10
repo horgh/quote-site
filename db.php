@@ -325,7 +325,28 @@ function _get_latest_quotes()
 		FROM quote
 		WHERE create_time IS NOT NULL
 		ORDER BY create_time DESC
-		LIMIT 20
+		LIMIT 50
+";
+
+	$quotes = _db_fetch_quotes($sql, array());
+
+	return $quotes;
+}
+
+function _get_latest_quotes_by_id()
+{
+	$sql = "
+		SELECT
+		id,
+		quote,
+		create_time AT TIME ZONE 'America/Vancouver',
+		added_by,
+		update_time AT TIME ZONE 'America/Vancouver',
+		update_notes
+		FROM quote
+		WHERE create_time IS NOT NULL
+		ORDER BY id DESC
+		LIMIT 50
 ";
 
 	$quotes = _db_fetch_quotes($sql, array());

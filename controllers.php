@@ -260,6 +260,20 @@ function _request_latest_quotes()
 	));
 }
 
+function _request_latest_quotes_by_id()
+{
+	$quotes = _get_latest_quotes_by_id();
+	if (!is_array($quotes)) {
+		echo "Unable to look up quotes: $quotes";
+		return;
+	}
+
+	_show_template('view_latest', array(
+		'page_title' => 'Latest quotes',
+		'quotes'     => $quotes,
+	));
+}
+
 // Show a page where we can download the site and its database.
 // We display the last time these were modified.
 function _request_download()

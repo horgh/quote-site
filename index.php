@@ -60,6 +60,10 @@ function main()
 			_request_latest_quotes();
 			break;
 
+		case 'latest-quotes-by-id':
+			_request_latest_quotes_by_id();
+			break;
+
 		case 'download':
 			_request_download();
 			break;
