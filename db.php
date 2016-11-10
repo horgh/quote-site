@@ -266,7 +266,9 @@ function _get_random_quotes()
 		id,
 		quote,
 		create_time AT TIME ZONE 'America/Vancouver',
-		added_by
+		added_by,
+		update_time AT TIME ZONE 'America/Vancouver',
+		update_notes
 		FROM quote
 		ORDER BY RANDOM()
 		LIMIT 20
@@ -288,7 +290,9 @@ function _get_quote_by_id($id)
 		id,
 		quote,
 		create_time AT TIME ZONE 'America/Vancouver',
-		added_by
+		added_by,
+		update_time AT TIME ZONE 'America/Vancouver',
+		update_notes
 		FROM quote
 		WHERE id = ?
 	";
@@ -315,7 +319,9 @@ function _get_latest_quotes()
 		id,
 		quote,
 		create_time AT TIME ZONE 'America/Vancouver',
-		added_by
+		added_by,
+		update_time AT TIME ZONE 'America/Vancouver',
+		update_notes
 		FROM quote
 		WHERE create_time IS NOT NULL
 		ORDER BY create_time DESC
@@ -336,7 +342,9 @@ function _get_quotes_missing_adder()
 		id,
 		quote,
 		create_time AT TIME ZONE 'America/Vancouver',
-		added_by
+		added_by,
+		update_time AT TIME ZONE 'America/Vancouver',
+		update_notes
 		FROM quote
 		WHERE added_by IS NULL
 		ORDER BY 1 DESC
@@ -357,11 +365,12 @@ function _get_quotes_missing_date()
 		id,
 		quote,
 		create_time AT TIME ZONE 'America/Vancouver',
-		added_by
+		added_by,
+		update_time AT TIME ZONE 'America/Vancouver',
+		update_notes
 		FROM quote
 		WHERE create_time IS NULL
 		ORDER BY 1 DESC
-		LIMIT 20
 ";
 
 	$quotes = _db_fetch_quotes($sql, array());
@@ -449,7 +458,9 @@ function _search_quotes($query, $page, $page_size)
 		id,
 		quote,
 		create_time AT TIME ZONE 'America/Vancouver',
-		added_by
+		added_by,
+		update_time AT TIME ZONE 'America/Vancouver',
+		update_notes
 		FROM quote
 		WHERE quote LIKE ?
 		ORDER BY 1 DESC
@@ -543,10 +554,12 @@ function _db_fetch_quotes($sql, $params)
 	$quotes = array();
 	foreach ($rows as $row) {
 		$quotes[] = array(
-			'id'          => intval($row[0]),
-			'quote'       => $row[1],
-			'create_time' => $row[2],
-			'added_by'    => $row[3],
+			'id'           => intval($row[0]),
+			'quote'        => $row[1],
+			'create_time'  => $row[2],
+			'added_by'     => $row[3],
+			'update_time'  => $row[4],
+			'update_notes' => $row[5],
 		);
 	}
 

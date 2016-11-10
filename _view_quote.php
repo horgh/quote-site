@@ -24,4 +24,10 @@
 		<div class="quote_text">
 			<?= nl2br(htmlspecialchars($quote['quote'])); ?>
 		</div>
+
+		<?php if (isset($show_update_notes) && $show_update_notes): ?>
+			<div class="update_notes">
+				Update notes: <?= htmlspecialchars($quote['update_notes']); ?>
+			</div>
+		<?php endif; ?>
 	</div>
