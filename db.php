@@ -184,6 +184,8 @@ function _get_popular_quotes($page, $page_size)
 		LEFT JOIN quote q
 		ON qs.quote_id = q.id
 
+		WHERE q.sensitive = false
+
 		GROUP BY q.id
 
 		ORDER BY count DESC, q.id ASC
@@ -235,7 +237,12 @@ function _count_popular_quotes()
 {
 	$sql = '
 		SELECT COUNT(1) FROM
-		(SELECT COUNT(1) FROM quote_search GROUP BY quote_id) c
+		(
+			SELECT COUNT(1) FROM quote_search qs
+			LEFT JOIN quote q ON q.id = qs.quote_id
+			WHERE q.sensitive = false
+		  GROUP BY quote_id
+		) c
 	';
 
 	$dbh = _connect_to_database();
@@ -270,6 +277,7 @@ function _get_random_quotes()
 		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
 		FROM quote
+		WHERE sensitive = false
 		ORDER BY RANDOM()
 		LIMIT 20
 ";
@@ -296,6 +304,7 @@ function _get_quotes($page, $page_size)
 		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
 		FROM quote
+		WHERE sensitive = false
 		ORDER BY id
 		LIMIT ? OFFSET ?
 ";
@@ -326,6 +335,7 @@ function _get_quote_by_id($id)
 		update_notes
 		FROM quote
 		WHERE id = ?
+		AND sensitive = false
 	";
 
 	$params = array($id);
@@ -355,6 +365,7 @@ function _get_latest_quotes()
 		update_notes
 		FROM quote
 		WHERE create_time IS NOT NULL
+		AND sensitive = false
 		ORDER BY create_time DESC
 		LIMIT 50
 ";
@@ -376,6 +387,7 @@ function _get_latest_quotes_by_id()
 		update_notes
 		FROM quote
 		WHERE create_time IS NOT NULL
+		AND sensitive = false
 		ORDER BY id DESC
 		LIMIT 50
 ";
@@ -399,6 +411,7 @@ function _get_quotes_missing_adder()
 		update_notes
 		FROM quote
 		WHERE added_by IS NULL
+		AND sensitive = false
 		ORDER BY 1 DESC
 		LIMIT 20
 ";
@@ -422,6 +435,7 @@ function _get_quotes_missing_date()
 		update_notes
 		FROM quote
 		WHERE create_time IS NULL
+		AND sensitive = false
 		ORDER BY 1 DESC
 ";
 
@@ -437,7 +451,10 @@ function _count_quotes()
 		return "cannot connect to database";
 	}
 
-	$sql = "SELECT COUNT(1) FROM quote";
+	$sql = "
+		SELECT COUNT(1) FROM quote
+		WHERE sensitive = false
+";
 
 	$rows = $dbh->query($sql, PDO::FETCH_NUM);
 
@@ -459,6 +476,7 @@ function _count_quotes_missing_adder()
 SELECT COUNT(1)
 FROM quote
 WHERE added_by IS NULL
+AND sensitive = false
 ";
 
 	$rows = $dbh->query($sql, PDO::FETCH_NUM);
@@ -481,6 +499,7 @@ function _count_quotes_missing_date()
 SELECT COUNT(1)
 FROM quote
 WHERE create_time IS NULL
+AND sensitive = false
 ";
 
 	$rows = $dbh->query($sql, PDO::FETCH_NUM);
@@ -515,6 +534,7 @@ function _search_quotes($query, $page, $page_size)
 		update_notes
 		FROM quote
 		WHERE quote LIKE ?
+		AND sensitive = false
 		ORDER BY 1 DESC
 		LIMIT ? OFFSET ?
 	";
@@ -539,6 +559,7 @@ function _count_matching_quotes($query)
 		SELECT COUNT(1)
 		FROM quote
 		WHERE quote LIKE ?
+		AND sensitive = false
 	";
 
 	$params = array($query);
