@@ -48,6 +48,10 @@ function main()
 			_request_get_missing_date();
 			break;
 
+		case 'browse-quotes':
+			_request_get_browse_quotes();
+			break;
+
 		case 'random-quotes':
 			_request_get_random_quotes();
 			break;

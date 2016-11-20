@@ -279,6 +279,37 @@ function _get_random_quotes()
 	return $quotes;
 }
 
+function _get_quotes($page, $page_size)
+{
+	if (!is_int($page) || $page < 1 ||
+		!is_int($page_size) || $page_size < 1) {
+		_log_message('error', "Invalid parameter");
+		return false;
+	}
+
+	$sql = "
+		SELECT
+		id,
+		quote,
+		create_time AT TIME ZONE 'America/Vancouver',
+		added_by,
+		update_time AT TIME ZONE 'America/Vancouver',
+		update_notes
+		FROM quote
+		ORDER BY id
+		LIMIT ? OFFSET ?
+";
+
+	$params = array(
+		$page_size,
+		($page-1)*$page_size,
+	);
+
+	$quotes = _db_fetch_quotes($sql, $params);
+
+	return $quotes;
+}
+
 function _get_quote_by_id($id)
 {
 	if (!is_int($id)) {

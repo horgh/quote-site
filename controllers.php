@@ -214,6 +214,52 @@ function _request_get_missing_date()
 	));
 }
 
+function _request_get_browse_quotes()
+{
+	$page = 1;
+	if (array_key_exists('page', $_GET) && is_string($_GET['page']) &&
+		is_numeric($_GET['page'])) {
+		$page = intval($_GET['page']);
+	}
+
+	$page_size = 20;
+	if (array_key_exists('page-size', $_GET) && is_string($_GET['page-size']) &&
+		is_numeric($_GET['page-size'])) {
+		$page_size = intval($_GET['page-size']);
+	}
+
+	$quotes = _get_quotes($page, $page_size);
+	if (false === $quotes) {
+		echo "Unable to retrieve quotes.";
+		return;
+	}
+
+	$count_quotes = _count_quotes();
+	if (!is_int($count_quotes)) {
+		echo "Unable to retrieve quote count.";
+		return;
+	}
+
+	$pages = intval(ceil($count_quotes/$page_size));
+	if ($page > $pages) {
+		echo "Invalid page.";
+		return;
+	}
+
+	$next_page_url = 'index.php?action=browse-quotes&page=' . ($page+1);
+	$prev_page_url = 'index.php?action=browse-quotes&page=' . ($page-1);
+
+	_show_template('view_browse', array(
+		'page_title'    => 'Quotes',
+		'quotes'        => $quotes,
+		'count_quotes'  => $count_quotes,
+		'page'          => $page,
+		'pages'         => $pages,
+		'next_page_url' => $next_page_url,
+		'prev_page_url' => $prev_page_url,
+	));
+}
+
 function _request_get_random_quotes()
 {
 	$quotes = _get_random_quotes();
