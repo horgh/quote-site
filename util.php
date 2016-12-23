@@ -20,8 +20,7 @@ function _log_message($level, $msg)
 		$function = $backtrace_array[1]['function'];
 	}
 
-	$msg = htmlspecialchars($msg);
-	print "<p>Log: $function: $msg</p>";
+	error_log("Quote site: $function: $msg");
 }
 
 //! clean up a quote

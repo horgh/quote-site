@@ -55,6 +55,7 @@ function _add_quote($quote, $added_by)
 
 	if ($sth->execute($params) === false) {
 		_log_message('error', "failure inserting quote");
+		_log_message('error', print_r($sth->errorInfo(), true));
 		return false;
 	}
 
@@ -533,7 +534,7 @@ function _search_quotes($query, $page, $page_size)
 		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
 		FROM quote
-		WHERE quote LIKE ?
+		WHERE quote ILIKE ?
 		AND sensitive = false
 		ORDER BY 1 DESC
 		LIMIT ? OFFSET ?
@@ -558,7 +559,7 @@ function _count_matching_quotes($query)
 	$sql = "
 		SELECT COUNT(1)
 		FROM quote
-		WHERE quote LIKE ?
+		WHERE quote ILIKE ?
 		AND sensitive = false
 	";
 
