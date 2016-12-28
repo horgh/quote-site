@@ -9,6 +9,13 @@
 // If not, clean it up, and ask them to confirm.
 //
 // This function will always redirect us back to the add quote screen.
+//
+// If we do not add to the database yet (either requiring confirmation or due
+// to an error), then we put everything into session for simplicity (as opposed
+// to having some in query and some not). The quote must be in the session as
+// it is likely too long for a reasonable query string. However we always reach
+// this function from submitting the form, so our input will come from the
+// request body.
 function _request_add_quote()
 {
 	// Pull out parameters.
@@ -24,54 +31,83 @@ function _request_add_quote()
 		$quote = $_POST['quote'];
 	}
 
-	if (strlen($quote) === 0) {
-		_add_flash_error("No quote given.");
-		_redirect('index.php', array('added_by' => $added_by));
-		return;
+	if (array_key_exists('quote_image', $_FILES)) {
+		$quote_image = _get_image_upload();
+		if (false === $quote_image) {
+			_add_flash_error("File upload failed.");
+			_save_in_session('added_by', $added_by);
+			_save_in_session('quote', $quote);
+			_redirect('index.php', array());
+			return;
+		}
+	} else if (array_key_exists('quote_image', $_POST) &&
+		is_string($_POST['quote_image'])) {
+		$quote_image = $_POST['quote_image'];
 	}
 
-	// We can't put the quote in query parameters in the redirect. It's probably
-	// too long. Save it in the session if we need to keep it around after a
-	// redirect. This should only be needed if we want to either confirm the quote
-	// or there was an error.
+	// Validate them.
+
+	if (strlen($quote) === 0) {
+		_add_flash_error("No quote given.");
+		_save_in_session('added_by', $added_by);
+		_save_in_session('quote_image', $quote_image);
+		_redirect('index.php', array());
+		return;
+	}
 
 	if (strlen($added_by) === 0) {
 		_add_flash_error("Please enter your name.");
 		_save_in_session('quote', $quote);
+		_save_in_session('quote_image', $quote_image);
 		_redirect('index.php', array());
 		return;
 	}
 
-	// we may be given a 'confirm_quote' value from a checkbox.
-	// if it is given, try to add the quote.
+	if (strlen($quote_image) > 0 && !file_exists($quote_image)) {
+		_add_flash_error("Image not found.");
+		_save_in_session('added_by', $added_by);
+		_save_in_session('quote', $quote);
+		_redirect('index.php', array());
+		return;
+	}
+
+	// If we've confirmed to add the quote as is (checkbox), try to do so.
+
 	if (array_key_exists('confirm_quote', $_POST) &&
 		$_POST['confirm_quote'] === 'on') {
-		if (!_add_quote($quote, $added_by)) {
+		if (!_add_quote($quote, $added_by, $quote_image)) {
 			_add_flash_error("Failure adding the quote to the database.");
+			_save_in_session('added_by', $added_by);
 			_save_in_session('quote', $quote);
-			_redirect('index.php', array('added_by' => $added_by));
+			_save_in_session('quote_image', $quote_image);
+			_redirect('index.php', array());
 			return;
 		}
 
 		_add_flash_success("Added the quote to the database.");
-		_notify_to_irc("New quote added by: $added_by.");
+		_notify_to_irc("$added_by added a quote");
 		_redirect('index.php', array());
 		return;
 	}
 
-	// otherwise we are not adding the quote yet - we want to try to
-	// clean up the quote a bit.
+	// We're not saving the quote yet. Clean it up a bit and re-display.
+
 	$quote_clean = _clean_quote($quote);
 	if (false === $quote_clean) {
 		_add_flash_error("Failure cleaning up the quote.");
+		_save_in_session('added_by', $added_by);
 		_save_in_session('quote', $quote);
-		_redirect('index.php', array('added_by' => $added_by));
+		_save_in_session('quote_image', $quote_image);
+		_redirect('index.php', array());
 		return;
 	}
 
+
 	_add_flash_success("Please confirm you want to add the quote as it now appears.");
+	_save_in_session('added_by', $added_by);
 	_save_in_session('quote', $quote_clean);
-	_redirect('index.php', array('added_by' => $added_by));
+	_save_in_session('quote_image', $quote_image);
+	_redirect('index.php', array());
 }
 
 function _request_get_show_top_adders()
@@ -426,12 +462,17 @@ function _request_search()
 // We may reach here from being redirected to either confirm the quote or on
 // error.
 //
-// Our added_by parameter may be in query parameters if so. Our quote may be
-// in the session.
+// All parameters get passed along to us (if previously set) in the session.
 function _request_view_add_quote()
 {
 	$successes = _get_success_flashes();
 	$errors = _get_error_flashes();
+
+	$added_by = '';
+	if (isset($_SESSION['added_by']) && is_string($_SESSION['added_by'])) {
+		$added_by = $_SESSION['added_by'];
+		unset($_SESSION['added_by']);
+	}
 
 	$quote = '';
 	if (isset($_SESSION['quote']) && is_string($_SESSION['quote'])) {
@@ -439,17 +480,19 @@ function _request_view_add_quote()
 		unset($_SESSION['quote']);
 	}
 
-	$added_by = '';
-	if (isset($_GET['added_by']) && is_string($_GET['added_by'])) {
-		$added_by = $_GET['added_by'];
+	$quote_image = '';
+	if (isset($_SESSION['quote_image']) && is_string($_SESSION['quote_image'])) {
+		$quote_image = $_SESSION['quote_image'];
+		unset($_SESSION['quote_image']);
 	}
 
-	_show_template('view_index', $params = array(
-		'page_title' => 'Add quote',
-		'successes'  => $successes,
-		'errors'     => $errors,
-		'quote'      => $quote,
-		'added_by'   => $added_by,
+	_show_template('view_index', array(
+		'page_title'  => 'Add quote',
+		'successes'   => $successes,
+		'errors'      => $errors,
+		'quote'       => $quote,
+		'added_by'    => $added_by,
+		'quote_image' => $quote_image,
 	));
 }
 

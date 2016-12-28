@@ -28,10 +28,11 @@ function _connect_to_database()
 /*!
  * @param string $quote
  * @param string $added_by who is adding it
+ * @param string $quote_image Optional path to image.
  *
  * @return bool success
  */
-function _add_quote($quote, $added_by)
+function _add_quote($quote, $added_by, $quote_image)
 {
 	if (strlen($quote) === 0 || strlen($added_by) === 0) {
 		_log_message('error', "invalid parameter");
@@ -41,10 +42,11 @@ function _add_quote($quote, $added_by)
 	// get a connection to the db.
 	$dbh = _connect_to_database();
 
-	$sql = "INSERT INTO quote (quote, added_by) VALUES(?, ?)";
+	$sql = "INSERT INTO quote (quote, added_by, image) VALUES(?, ?, ?)";
 	$params = array(
 		$quote,
 		$added_by,
+		strlen($quote_image) > 0 ? $quote_image : null,
 	);
 
 	$sth = $dbh->prepare($sql);
@@ -179,7 +181,8 @@ function _get_popular_quotes($page, $page_size)
 		q.id AS quote_id,
 		q.quote AS quote,
 		q.create_time AT TIME ZONE 'America/Vancouver',
-		q.added_by
+		q.added_by,
+		q.image
 
 		FROM quote_search qs
 		LEFT JOIN quote q
@@ -275,6 +278,7 @@ function _get_random_quotes()
 		quote,
 		create_time AT TIME ZONE 'America/Vancouver',
 		added_by,
+		image,
 		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
 		FROM quote
@@ -302,6 +306,7 @@ function _get_quotes($page, $page_size)
 		quote,
 		create_time AT TIME ZONE 'America/Vancouver',
 		added_by,
+		image,
 		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
 		FROM quote
@@ -332,6 +337,7 @@ function _get_quote_by_id($id)
 		quote,
 		create_time AT TIME ZONE 'America/Vancouver',
 		added_by,
+		image,
 		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
 		FROM quote
@@ -362,6 +368,7 @@ function _get_latest_quotes()
 		quote,
 		create_time AT TIME ZONE 'America/Vancouver',
 		added_by,
+		image,
 		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
 		FROM quote
@@ -384,6 +391,7 @@ function _get_latest_quotes_by_id()
 		quote,
 		create_time AT TIME ZONE 'America/Vancouver',
 		added_by,
+		image,
 		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
 		FROM quote
@@ -408,6 +416,7 @@ function _get_quotes_missing_adder()
 		quote,
 		create_time AT TIME ZONE 'America/Vancouver',
 		added_by,
+		image,
 		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
 		FROM quote
@@ -432,6 +441,7 @@ function _get_quotes_missing_date()
 		quote,
 		create_time AT TIME ZONE 'America/Vancouver',
 		added_by,
+		image,
 		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
 		FROM quote
@@ -531,6 +541,7 @@ function _search_quotes($query, $page, $page_size)
 		quote,
 		create_time AT TIME ZONE 'America/Vancouver',
 		added_by,
+		image,
 		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
 		FROM quote
@@ -632,8 +643,9 @@ function _db_fetch_quotes($sql, $params)
 			'quote'        => $row[1],
 			'create_time'  => $row[2],
 			'added_by'     => $row[3],
-			'update_time'  => $row[4],
-			'update_notes' => $row[5],
+			'image'        => $row[4],
+			'update_time'  => $row[5],
+			'update_notes' => $row[6],
 		);
 	}
 

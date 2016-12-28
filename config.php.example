@@ -12,10 +12,18 @@ $NOTIFY_HOST = '';
 $NOTIFY_CHAN = '';
 $NOTIFY_BIN = '/usr/local/bin/ircnotify';
 
+// Where we store images associated with quotes.
+$IMAGES_DIR = 'quoteimages';
+
+$IMAGE_MAX_SIZE = 5*1024*1024;
+
 // Set other global settings here.
 if (!defined('DEBUG')) {
 	define('DEBUG', false);
 }
 
-ini_set('display_errors', 'On');
 ini_set('error_reporting', E_ALL | E_NOTICE | E_STRICT | E_DEPRECATED);
+ini_set('display_errors', 'Off');
+ini_set('display_startup_errors', false);
+ini_set('log_errors', true);
+ini_set('error_log', 'syslog');

@@ -35,3 +35,7 @@ Some things to keep in mind:
   * Currently we alway display quotes in the America/Vancouver timezone
   * Error handling is pretty raw. For example if you have a database query
     problem, it's likely the page will get pretty ugly.
+
+
+## Requirements
+  * php-imagick ([ImageMagick](http://php.net/manual/en/book.imagick.php))

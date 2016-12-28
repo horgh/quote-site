@@ -300,3 +300,64 @@ function _session_start()
 
 	session_start();
 }
+
+// We've been given an image upload to associate with a quote.
+//
+// Validate it and store it somewhere persistently. Return path to it. This path
+// is HTTP accessible as well as a disk path.
+function _get_image_upload()
+{
+	if (!array_key_exists('quote_image', $_FILES) ||
+		!is_array($_FILES['quote_image'])) {
+		_add_flash_error("No image provided.");
+		return false;
+	}
+
+	$file = $_FILES['quote_image'];
+
+	global $IMAGE_MAX_SIZE;
+	if ($file['size'] > $IMAGE_MAX_SIZE) {
+		_add_flash_error("Image is too large.");
+		return false;
+	}
+
+	try {
+		$image = new Imagick($file['tmp_name']);
+	} catch (Exception $e) {
+		_add_flash_error("Invalid image.");
+		return false;
+	}
+
+	$suffix = '';
+	switch ($image->getImageFormat()) {
+	case 'PNG':
+		$suffix = '.png';
+		break;
+	case 'JPEG':
+	case 'JPG':
+		$suffix = '.jpg';
+		break;
+	case 'GIF':
+		$suffix = '.gif';
+		break;
+	default:
+		_add_flash_error("Invalid image format. Please use PNG/JPG/GIF.");
+		return false;
+	}
+
+	$id = uniqid('quote-', true);
+
+	global $IMAGES_DIR;
+	$dest_path = $IMAGES_DIR . '/' . $id . $suffix;
+	if (file_exists($dest_path)) {
+		_add_flash_error("Filename collision.");
+		return false;
+	}
+
+	if (!move_uploaded_file($file['tmp_name'], $dest_path)) {
+		_add_flash_error("Unable to save image.");
+		return false;
+	}
+
+	return $dest_path;
+}

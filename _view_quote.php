@@ -25,6 +25,10 @@
 			<?= nl2br(htmlspecialchars($quote['quote'])); ?>
 		</div>
 
+		<?php if (strlen($quote['image']) > 0): ?>
+			<img src="<?= htmlspecialchars($quote['image']); ?>" class="quote_image">
+		<?php endif; ?>
+
 		<?php if (isset($show_update_notes) && $show_update_notes): ?>
 			<div class="update_notes">
 				Update notes: <?= htmlspecialchars($quote['update_notes']); ?>

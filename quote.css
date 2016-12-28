@@ -28,3 +28,9 @@
 .update_notes {
 	margin: 10px 0 0 0;
 }
+
+.quote_image {
+	max-width: 500px;
+	max-height: 500px;
+	margin: 10px 0 0 0;
+}

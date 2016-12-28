@@ -21,7 +21,7 @@
 	<?php endforeach; ?>
 </div>
 
-<form method="POST" action="index.php">
+<form method="POST" action="index.php" enctype="multipart/form-data">
 	<input type="hidden" name="action" value="add_quote">
 
 	<?php if (strlen($added_by) > 0): ?>
@@ -45,6 +45,19 @@
 		<textarea name="quote" cols="90" rows="20"
 			placeholder="Enter the quote"
 			></textarea>
+	<?php endif; ?>
+
+	<br>
+
+	<?php if (strlen($quote) > 0): ?>
+		<?php if (strlen($quote_image) > 0): ?>
+			<img src="<?= htmlspecialchars($quote_image); ?>" class="quote_image">
+			<input type="hidden" name="quote_image"
+				value="<?= htmlspecialchars($quote_image); ?>">
+		<?php endif; ?>
+	<?php else: ?>
+		Image (optional):
+		<input name="quote_image" type="file">
 	<?php endif; ?>
 
 	<br>
