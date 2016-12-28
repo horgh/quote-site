@@ -6,7 +6,14 @@
 <p>It is a <a href="https://www.postgresql.org/">PostgreSQL</a> database dump.</p>
 
 <p><a href="<?= htmlspecialchars($db_file); ?>">Download the database dump</a>
-(Last updated <?= htmlspecialchars($db_mtime); ?>) </p>
+(Last updated <?= htmlspecialchars($db_mtime); ?>)</p>
+
+
+<h2>Images</h2>
+<p>Quotes can have images. Only the image filenames/paths are in the database.</p>
+
+<p><a href="<?= htmlspecialchars($images_file); ?>">Download the images</a>
+(Last updated <?= htmlspecialchars($images_mtime); ?>)</p>
 
 
 <h2>Quote bot</h2>

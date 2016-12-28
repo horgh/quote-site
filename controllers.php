@@ -370,10 +370,22 @@ function _request_download()
 
 	$db_mtime = strftime("%F %T %Z", $db_sbuf[9]);
 
+	$images_file = 'files/images.tar.gz';
+
+	$images_sbuf = @stat($images_file);
+	if (false === $images_sbuf) {
+		echo "Unable to stat $images_file";
+		return;
+	}
+
+	$images_mtime = strftime("%F %T %Z", $images_sbuf[9]);
+
 	_show_template('view_download', array(
-		'page_title'      => 'Download',
-		'db_file'         => $db_file,
-		'db_mtime'        => $db_mtime,
+		'page_title'   => 'Download',
+		'db_file'      => $db_file,
+		'db_mtime'     => $db_mtime,
+		'images_file'  => $images_file,
+		'images_mtime' => $images_mtime,
 	));
 }
 
