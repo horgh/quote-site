@@ -1,6 +1,5 @@
 <?= _get_template('_view_head', array('page_title' => $page_title, 'js' => array('Chart.min.js'))); ?>
 
-<h2>Quotes added in the past year</h2>
 <canvas id="chart" height="400" width="800"></canvas>
 
 <script>

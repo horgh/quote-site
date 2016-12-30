@@ -146,7 +146,7 @@ function _get_quotes_by_months()
 		COUNT(quote)
 		FROM quote
 		WHERE create_time IS NOT NULL AND
-		create_time > NOW() - CAST('12 months' AS INTERVAL)
+		create_time > NOW() - CAST('5 years 1 month' AS INTERVAL)
 		GROUP BY 1, 2
 		ORDER BY 1, 2
 ";
