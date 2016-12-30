@@ -49,12 +49,10 @@
 
 	<br>
 
-	<?php if (strlen($quote) > 0): ?>
-		<?php if (strlen($quote_image) > 0): ?>
-			<img src="<?= htmlspecialchars($quote_image); ?>" class="quote_image">
-			<input type="hidden" name="quote_image"
-				value="<?= htmlspecialchars($quote_image); ?>">
-		<?php endif; ?>
+	<?php if (strlen($quote_image) > 0): ?>
+		<img src="<?= htmlspecialchars($quote_image); ?>" class="quote_image">
+		<input type="hidden" name="quote_image"
+			value="<?= htmlspecialchars($quote_image); ?>">
 	<?php else: ?>
 		Image (optional):
 		<input name="quote_image" type="file">

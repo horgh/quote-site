@@ -31,10 +31,11 @@ function _request_add_quote()
 		$quote = $_POST['quote'];
 	}
 
-	if (array_key_exists('quote_image', $_FILES)) {
+	$quote_image = '';
+	if (array_key_exists('quote_image', $_FILES) &&
+		$_FILES['quote_image']['size'] > 0) {
 		$quote_image = _get_image_upload();
 		if (false === $quote_image) {
-			_add_flash_error("File upload failed.");
 			_save_in_session('added_by', $added_by);
 			_save_in_session('quote', $quote);
 			_redirect('index.php', array());
@@ -44,6 +45,7 @@ function _request_add_quote()
 		is_string($_POST['quote_image'])) {
 		$quote_image = $_POST['quote_image'];
 	}
+
 
 	// Validate them.
 
@@ -71,6 +73,7 @@ function _request_add_quote()
 		return;
 	}
 
+
 	// If we've confirmed to add the quote as is (checkbox), try to do so.
 
 	if (array_key_exists('confirm_quote', $_POST) &&
@@ -90,6 +93,7 @@ function _request_add_quote()
 		return;
 	}
 
+
 	// We're not saving the quote yet. Clean it up a bit and re-display.
 
 	$quote_clean = _clean_quote($quote);
@@ -101,7 +105,6 @@ function _request_add_quote()
 		_redirect('index.php', array());
 		return;
 	}
-
 
 	_add_flash_success("Please confirm you want to add the quote as it now appears.");
 	_save_in_session('added_by', $added_by);
