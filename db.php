@@ -138,17 +138,43 @@ function _get_quotes_by_months()
 		return "cannot connect to database";
 	}
 
-	// Some are missing create times.
+	// The first query gets a count of quotes for each year+month. However, if a
+	// year+month has no quotes, then it does not appear. To ensure year+months
+	// with zero quotes appear, add a row for each with a count of zero.
+
 	$sql = "
-		SELECT
-		EXTRACT(YEAR FROM create_time),
-		EXTRACT(MONTH FROM create_time),
-		COUNT(quote)
-		FROM quote
-		WHERE create_time IS NOT NULL AND
-		create_time > NOW() - CAST('5 years 1 month' AS INTERVAL)
-		GROUP BY 1, 2
-		ORDER BY 1, 2
+SELECT
+year, month, SUM(count)
+FROM
+(
+
+  (
+  SELECT
+  EXTRACT(YEAR FROM create_time) AS year,
+  EXTRACT(MONTH FROM create_time) AS month,
+  COUNT(quote) AS count
+  FROM quote
+  WHERE create_time IS NOT NULL AND
+  create_time > NOW() - CAST('5 years 1 month' AS INTERVAL)
+  GROUP BY year, month
+  )
+
+  UNION
+
+  (
+  SELECT
+  EXTRACT(YEAR FROM month) AS year,
+  EXTRACT(MONTH FROM month) AS month,
+  0 AS count
+  FROM
+  GENERATE_SERIES(NOW() - CAST('5 years 1 month' AS INTERVAL), NOW(), '1 month')
+  AS month
+  )
+
+) AS month_counts
+
+GROUP BY year, month
+ORDER BY year, month
 ";
 
 	$rows = $dbh->query($sql, PDO::FETCH_NUM);
