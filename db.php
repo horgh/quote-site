@@ -231,6 +231,7 @@ function _get_popular_quotes($page, $page_size)
 			'quote'       => $row[2],
 			'create_time' => $row[3],
 			'added_by'    => $row[4],
+			'image'       => $row[5],
 		);
 	}
 
