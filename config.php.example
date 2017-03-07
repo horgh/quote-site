@@ -17,6 +17,9 @@ $IMAGES_DIR = 'quoteimages';
 
 $IMAGE_MAX_SIZE = 5*1024*1024;
 
+// Title shown prominently on the site.
+$SITE_TITLE = 'Quote';
+
 // Set other global settings here.
 if (!defined('DEBUG')) {
 	define('DEBUG', false);

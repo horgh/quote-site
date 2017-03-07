@@ -118,7 +118,7 @@ function _get_template($name, array $params)
 		return false;
 	}
 
-	// bring params into the local scope.
+	// Bring params into the local scope.
 	foreach ($params as $key => $value) {
 		$$key = $value;
 	}
