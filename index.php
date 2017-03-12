@@ -60,6 +60,14 @@ function main()
 			_request_get_quote();
 			break;
 
+		case 'view-edit-quote':
+			_request_view_edit_quote();
+			break;
+
+		case 'edit-quote':
+			_request_edit_quote();
+			break;
+
 		case 'latest-quotes':
 			_request_latest_quotes();
 			break;

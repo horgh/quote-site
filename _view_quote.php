@@ -2,6 +2,9 @@
 		<div class="number">
 			<a href="index.php?action=view-quote&amp;id=<?= htmlspecialchars(rawurlencode($quote['id'])); ?>"
 				>Quote #<?= htmlspecialchars($quote['id']); ?></a>
+
+			<a href="index.php?action=view-edit-quote&amp;id=<?= htmlspecialchars(rawurlencode($quote['id'])); ?>"
+				>(edit)</a>
 		</div>
 
 		<div class="title">
@@ -40,7 +43,7 @@
 
 		<?php if (isset($show_update_notes) && $show_update_notes): ?>
 			<div class="update_notes">
-				Update notes: <?= htmlspecialchars($quote['update_notes']); ?>
+				Update notes: <?= nl2br(htmlspecialchars($quote['update_notes'])); ?>
 			</div>
 		<?php endif; ?>
 	</div>

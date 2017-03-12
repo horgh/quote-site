@@ -341,6 +341,7 @@ function _request_get_quote()
 
 	$quote = _get_quote_by_id(intval($_GET['id']));
 	if (!is_array($quote)) {
+		echo "Quote not found.";
 		return;
 	}
 
@@ -348,6 +349,103 @@ function _request_get_quote()
 		'page_title' => 'Quote #' . $quote['id'],
 		'quote'      => $quote,
 	));
+}
+
+function _request_view_edit_quote()
+{
+	$successes = _get_success_flashes();
+	$errors = _get_error_flashes();
+
+	$editor = '';
+	if (isset($_SESSION['editor']) && is_string($_SESSION['editor'])) {
+		$editor = $_SESSION['editor'];
+		unset($_SESSION['editor']);
+	}
+
+	if (!array_key_exists('id', $_GET) || !is_string($_GET['id']) ||
+		!is_numeric($_GET['id'])) {
+		echo "You must provide an ID.";
+		return;
+	}
+
+	$quote = _get_quote_by_id(intval($_GET['id']));
+	if (!is_array($quote)) {
+		echo "Quote not found.";
+		return;
+	}
+
+	_show_template('view_edit_quote', array(
+		'page_title'        => 'Edit quote #' . $quote['id'],
+		'successes'         => $successes,
+		'errors'            => $errors,
+		'quote'             => $quote,
+		'show_update_notes' => true,
+		'editor'            => $editor,
+	));
+}
+
+function _request_edit_quote()
+{
+	// Retrieve parameters from the request.
+
+	$id = -1;
+	if (array_key_exists('id', $_POST) && is_string($_POST['id']) &&
+		is_numeric($_POST['id'])) {
+		$id = intval($_POST['id']);
+	}
+
+	$title = '';
+	if (array_key_exists('title', $_POST) && is_string($_POST['title'])) {
+		$title = trim($_POST['title']);
+	}
+
+	$editor = '';
+	if (array_key_exists('editor', $_POST) && is_string($_POST['editor'])) {
+		$editor = trim($_POST['editor']);
+	}
+
+
+	// Validate the parameters.
+
+	$quote = _get_quote_by_id($id);
+	if (!is_array($quote)) {
+		_add_flash_error("Quote not found.");
+		_redirect('index.php', array());
+		return;
+	}
+
+	// Title is optional.
+
+	if (strlen($editor) === 0) {
+		_add_flash_error("You must provide your name.");
+		_redirect('index.php', array('action' => 'view-edit-quote', 'id' => $id));
+		return;
+	}
+
+
+	// Does this actually change anything?
+
+	// Right now we only support changing the quote's title.
+
+	if ($quote['title'] === $title) {
+		_add_flash_error("No change.");
+		_save_in_session('editor', $editor);
+		_redirect('index.php', array('action' => 'view-edit-quote', 'id' => $id));
+		return;
+	}
+
+
+	// Make the change.
+	if (!_update_quote($quote, $editor, $title)) {
+		_add_flash_error("Unable to update quote.");
+		_save_in_session('editor', $editor);
+		_redirect('index.php', array('action' => 'view-edit-quote', 'id' => $id));
+		return;
+	}
+
+	_add_flash_success("Quote updated.");
+	_notify_to_irc("$editor updated quote #$id.");
+	_redirect('index.php', array('action' => 'view-edit-quote', 'id' => $id));
 }
 
 function _request_latest_quotes()

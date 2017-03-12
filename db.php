@@ -75,6 +75,58 @@ function _add_quote($quote, $added_by, $title, $quote_image)
 	return true;
 }
 
+// Save the quote into the database.
+//
+// Right now the only field we support updating is the title.
+//
+// We expect you've checked the update is sane by this point.
+function _update_quote($quote, $editor, $title)
+{
+	// Title is optional.
+	if (!is_array($quote) || strlen($editor) === 0) {
+		_log_message('error', "Invalid parameter");
+		return false;
+	}
+
+	$update_message = date('Y-m-d H:i:s O') . ": $editor changed title from " .
+		$quote['title'] . " to " . $title;
+
+	$update_notes = '';
+	if (strlen($quote['update_notes']) > 0) {
+		$update_notes = $quote['update_notes'] . "\n" . $update_message;
+	} else {
+		$update_notes = $update_message;
+	}
+
+	$sql = 'UPDATE quote SET title = ?, update_notes = ? WHERE id = ?';
+	$params = array(
+		strlen($title) > 0 ? $title : null,
+		$update_notes,
+		$quote['id'],
+	);
+
+	$dbh = _connect_to_database();
+
+	$sth = $dbh->prepare($sql);
+	if (false === $sth) {
+		_log_message('error', "Failure preparing query");
+		return false;
+	}
+
+	if ($sth->execute($params) === false) {
+		_log_message('error', "Failure updating quote");
+		_log_message('error', print_r($sth->errorInfo(), true));
+		return false;
+	}
+
+	if ($sth->rowCount() !== 1) {
+		_log_message('error', "Quote not updated unexpectedly");
+		return false;
+	}
+
+	return true;
+}
+
 function _get_top_adders_all_time()
 {
 	$dbh = _connect_to_database();
@@ -391,7 +443,6 @@ function _get_quote_by_id($id)
 	}
 
 	if (count($quotes) !== 1) {
-		echo "Quote not found";
 		return false;
 	}
 
