@@ -1,4 +1,8 @@
 <?php
+//
+// These functions process and respond to HTTP requests.
+//
+
 // Try to add a quote.
 //
 // We ensure we have our parameters.
@@ -422,11 +426,10 @@ function _request_search()
 	}
 
 
-	// We're using the postgresql LIKE function. It has these metacharacters
-	// we need to escape: _, %
+	// Prepare the search string for the database. We need to escape
+	// metacharacters and then make it glob style.
 
-	$db_query = str_replace('_', '\\_', $query);
-	$db_query = str_replace('%', '\\%', $db_query);
+	$db_query = _db_escape_like_parameter($query);
 
 	// Support glob style.
 	$db_query = str_replace('*', '%', $db_query);

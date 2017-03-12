@@ -1,4 +1,8 @@
 <?php
+//
+// These functions interact with the database.
+//
+
 //! connect to the database
 /*!
  * @return PDO
@@ -677,4 +681,15 @@ function _db_fetch_quotes($sql, $params)
 	}
 
 	return $quotes;
+}
+
+// Take a string to be used for a LIKE parameter. Escape all of the
+// metacharacters: %, _, and the escape character itself, \.
+function _db_escape_like_parameter($s)
+{
+	$s = str_replace('\\', '\\\\', $s);
+	$s = str_replace('_', '\\_', $s);
+	$s = str_replace('%', '\\%', $s);
+
+	return $s;
 }
