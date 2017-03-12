@@ -7,8 +7,7 @@
 //
 // We ensure we have our parameters.
 //
-// We check if they've already confirmed the quote.
-// If so, add it.
+// We check if they've already confirmed the quote. If so, add it.
 //
 // If not, clean it up, and ask them to confirm.
 //
@@ -92,6 +91,8 @@ function _request_add_quote()
 		}
 
 		_add_flash_success("Added the quote to the database.");
+		// Keep who they are in case they are adding multiple quotes.
+		_save_in_session('added_by', $added_by);
 		_notify_to_irc("$added_by added a quote");
 		_redirect('index.php', array());
 		return;
