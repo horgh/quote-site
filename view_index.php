@@ -24,28 +24,14 @@
 <form method="POST" action="index.php" enctype="multipart/form-data">
 	<input type="hidden" name="action" value="add_quote">
 
-	<?php if (strlen($added_by) > 0): ?>
-		<input type="text" name="added_by"
-			value="<?= htmlspecialchars($added_by); ?>"
-			placeholder="Enter your name"
-			>
-	<?php else: ?>
-		<input type="text" name="added_by"
-			placeholder="Enter your name"
-			>
-	<?php endif; ?>
+	<input type="text" name="added_by" value="<?= htmlspecialchars($added_by); ?>"
+		placeholder="Enter your name"
+		required>
 
 	<br>
 
-	<?php if (strlen($quote) > 0): ?>
-		<textarea name="quote" cols="90" rows="20"
-			placeholder="Enter the quote"
-			><?= htmlspecialchars($quote); ?></textarea>
-	<?php else: ?>
-		<textarea name="quote" cols="90" rows="20"
-			placeholder="Enter the quote"
-			></textarea>
-	<?php endif; ?>
+	<textarea name="quote" cols="90" rows="20" placeholder="Enter the quote"
+		required><?= htmlspecialchars($quote); ?></textarea>
 
 	<br>
 
