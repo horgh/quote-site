@@ -26,7 +26,7 @@
 		Title:
 		<input type="text" name="title"
 			value="<?= htmlspecialchars($quote['title']); ?>"
-			placeholder="Title (optional)">
+			placeholder="Title" required>
 	</div>
 
 	<div class="added_by">

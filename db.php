@@ -32,15 +32,15 @@ function _connect_to_database()
 /*!
  * @param string $quote
  * @param string $added_by who is adding it
- * @param string $title Title. Optional.
+ * @param string $title Title.
  * @param string $quote_image Optional. Path to image.
  *
  * @return bool success
  */
 function _add_quote($quote, $added_by, $title, $quote_image)
 {
-	// Title is optional. As is the image.
-	if (strlen($quote) === 0 || strlen($added_by) === 0) {
+	// Image is optional.
+	if (strlen($quote) === 0 || strlen($added_by) === 0 || strlen($title) === 0) {
 		_log_message('error', "Invalid parameter");
 		return false;
 	}
@@ -51,7 +51,7 @@ function _add_quote($quote, $added_by, $title, $quote_image)
 	$params = array(
 		$quote,
 		$added_by,
-		strlen($title) > 0 ? $title : null,
+		$title,
 		strlen($quote_image) > 0 ? $quote_image : null,
 	);
 
@@ -82,8 +82,7 @@ function _add_quote($quote, $added_by, $title, $quote_image)
 // We expect you've checked the update is sane by this point.
 function _update_quote($quote, $editor, $title)
 {
-	// Title is optional.
-	if (!is_array($quote) || strlen($editor) === 0) {
+	if (!is_array($quote) || strlen($editor) === 0 || strlen($title) === 0) {
 		_log_message('error', "Invalid parameter");
 		return false;
 	}
@@ -100,7 +99,7 @@ function _update_quote($quote, $editor, $title)
 
 	$sql = 'UPDATE quote SET title = ?, update_notes = ? WHERE id = ?';
 	$params = array(
-		strlen($title) > 0 ? $title : null,
+		$title,
 		$update_notes,
 		$quote['id'],
 	);

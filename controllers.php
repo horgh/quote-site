@@ -76,7 +76,14 @@ function _request_add_quote()
 		return;
 	}
 
-	// Title is optional.
+	if (strlen($title) === 0) {
+		_add_flash_error("Please provide a title.");
+		_save_in_session('quote', $quote);
+		_save_in_session('added_by', $added_by);
+		_save_in_session('quote_image', $quote_image);
+		_redirect('index.php', array());
+		return;
+	}
 
 	if (strlen($quote_image) > 0 && !file_exists($quote_image)) {
 		_add_flash_error("Image not found.");
@@ -414,7 +421,11 @@ function _request_edit_quote()
 		return;
 	}
 
-	// Title is optional.
+	if (strlen($title) === 0) {
+		_add_flash_error("You must provide a title.");
+		_redirect('index.php', array('action' => 'view-edit-quote', 'id' => $id));
+		return;
+	}
 
 	if (strlen($editor) === 0) {
 		_add_flash_error("You must provide your name.");

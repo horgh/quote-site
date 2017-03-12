@@ -31,7 +31,7 @@
 	<br>
 
 	<input type="text" name="title" value="<?= htmlspecialchars($title); ?>"
-		placeholder="Title (optional)">
+		placeholder="Title" required>
 
 	<br>
 
