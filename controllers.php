@@ -28,6 +28,11 @@ function _request_add_quote()
 		$added_by = trim($_POST['added_by']);
 	}
 
+	$title = '';
+	if (array_key_exists('title', $_POST) && is_string($_POST['title'])) {
+		$title = trim($_POST['title']);
+	}
+
 	$quote = '';
 	if (array_key_exists('quote', $_POST) && is_string($_POST['quote'])) {
 		// Don't bother trimming it. We clean it up more extensively later.
@@ -40,6 +45,7 @@ function _request_add_quote()
 		$quote_image = _get_image_upload();
 		if (false === $quote_image) {
 			_save_in_session('added_by', $added_by);
+			_save_in_session('title', $title);
 			_save_in_session('quote', $quote);
 			_redirect('index.php', array());
 			return;
@@ -55,6 +61,7 @@ function _request_add_quote()
 	if (strlen($quote) === 0) {
 		_add_flash_error("No quote given.");
 		_save_in_session('added_by', $added_by);
+		_save_in_session('title', $title);
 		_save_in_session('quote_image', $quote_image);
 		_redirect('index.php', array());
 		return;
@@ -63,14 +70,18 @@ function _request_add_quote()
 	if (strlen($added_by) === 0) {
 		_add_flash_error("Please enter your name.");
 		_save_in_session('quote', $quote);
+		_save_in_session('title', $title);
 		_save_in_session('quote_image', $quote_image);
 		_redirect('index.php', array());
 		return;
 	}
 
+	// Title is optional.
+
 	if (strlen($quote_image) > 0 && !file_exists($quote_image)) {
 		_add_flash_error("Image not found.");
 		_save_in_session('added_by', $added_by);
+		_save_in_session('title', $title);
 		_save_in_session('quote', $quote);
 		_redirect('index.php', array());
 		return;
@@ -81,9 +92,10 @@ function _request_add_quote()
 
 	if (array_key_exists('confirm_quote', $_POST) &&
 		$_POST['confirm_quote'] === 'on') {
-		if (!_add_quote($quote, $added_by, $quote_image)) {
+		if (!_add_quote($quote, $added_by, $title, $quote_image)) {
 			_add_flash_error("Failure adding the quote to the database.");
 			_save_in_session('added_by', $added_by);
+			_save_in_session('title', $title);
 			_save_in_session('quote', $quote);
 			_save_in_session('quote_image', $quote_image);
 			_redirect('index.php', array());
@@ -105,6 +117,7 @@ function _request_add_quote()
 	if (false === $quote_clean) {
 		_add_flash_error("Failure cleaning up the quote.");
 		_save_in_session('added_by', $added_by);
+		_save_in_session('title', $title);
 		_save_in_session('quote', $quote);
 		_save_in_session('quote_image', $quote_image);
 		_redirect('index.php', array());
@@ -113,6 +126,7 @@ function _request_add_quote()
 
 	_add_flash_success("Please confirm you want to add the quote as it now appears.");
 	_save_in_session('added_by', $added_by);
+	_save_in_session('title', $title);
 	_save_in_session('quote', $quote_clean);
 	_save_in_session('quote_image', $quote_image);
 	_redirect('index.php', array());
@@ -493,6 +507,12 @@ function _request_view_add_quote()
 		unset($_SESSION['added_by']);
 	}
 
+	$title = '';
+	if (isset($_SESSION['title']) && is_string($_SESSION['title'])) {
+		$title = $_SESSION['title'];
+		unset($_SESSION['title']);
+	}
+
 	$quote = '';
 	if (isset($_SESSION['quote']) && is_string($_SESSION['quote'])) {
 		$quote = $_SESSION['quote'];
@@ -511,6 +531,7 @@ function _request_view_add_quote()
 		'errors'      => $errors,
 		'quote'       => $quote,
 		'added_by'    => $added_by,
+		'title'       => $title,
 		'quote_image' => $quote_image,
 	));
 }

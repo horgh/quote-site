@@ -30,6 +30,11 @@
 
 	<br>
 
+	<input type="text" name="title" value="<?= htmlspecialchars($title); ?>"
+		placeholder="Title (optional)">
+
+	<br>
+
 	<textarea name="quote" cols="90" rows="20" placeholder="Enter the quote"
 		required><?= htmlspecialchars($quote); ?></textarea>
 

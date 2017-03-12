@@ -1,6 +1,15 @@
 	<div class="quote">
 		<div class="number">
-			<a href="index.php?action=view-quote&amp;id=<?= htmlspecialchars(rawurlencode($quote['id'])); ?>">Quote #<?= htmlspecialchars($quote['id']); ?></a>
+			<a href="index.php?action=view-quote&amp;id=<?= htmlspecialchars(rawurlencode($quote['id'])); ?>"
+				>Quote #<?= htmlspecialchars($quote['id']); ?></a>
+		</div>
+
+		<div class="title">
+			<?php if ($quote['title'] === null): ?>
+				No title.
+			<?php else: ?>
+				<?= htmlspecialchars($quote['title']); ?>
+			<?php endif; ?>
 		</div>
 
 		<div class="added_by">

@@ -32,41 +32,43 @@ function _connect_to_database()
 /*!
  * @param string $quote
  * @param string $added_by who is adding it
- * @param string $quote_image Optional path to image.
+ * @param string $title Title. Optional.
+ * @param string $quote_image Optional. Path to image.
  *
  * @return bool success
  */
-function _add_quote($quote, $added_by, $quote_image)
+function _add_quote($quote, $added_by, $title, $quote_image)
 {
+	// Title is optional. As is the image.
 	if (strlen($quote) === 0 || strlen($added_by) === 0) {
-		_log_message('error', "invalid parameter");
+		_log_message('error', "Invalid parameter");
 		return false;
 	}
 
-	// get a connection to the db.
 	$dbh = _connect_to_database();
 
-	$sql = "INSERT INTO quote (quote, added_by, image) VALUES(?, ?, ?)";
+	$sql = "INSERT INTO quote (quote, added_by, title, image) VALUES(?, ?, ?, ?)";
 	$params = array(
 		$quote,
 		$added_by,
+		strlen($title) > 0 ? $title : null,
 		strlen($quote_image) > 0 ? $quote_image : null,
 	);
 
 	$sth = $dbh->prepare($sql);
 	if (false === $sth) {
-		_log_message('error', "failure preparing query");
+		_log_message('error', "Failure preparing query");
 		return false;
 	}
 
 	if ($sth->execute($params) === false) {
-		_log_message('error', "failure inserting quote");
+		_log_message('error', "Failure inserting quote");
 		_log_message('error', print_r($sth->errorInfo(), true));
 		return false;
 	}
 
 	if ($sth->rowCount() !== 1) {
-		_log_message('error', "quote not inserted unexpectedly");
+		_log_message('error', "Quote not inserted unexpectedly");
 		return false;
 	}
 
@@ -212,6 +214,7 @@ function _get_popular_quotes($page, $page_size)
 		q.quote AS quote,
 		q.create_time AT TIME ZONE 'America/Vancouver',
 		q.added_by,
+		q.title,
 		q.image
 
 		FROM quote_search qs
@@ -261,7 +264,8 @@ function _get_popular_quotes($page, $page_size)
 			'quote'       => $row[2],
 			'create_time' => $row[3],
 			'added_by'    => $row[4],
-			'image'       => $row[5],
+			'title'       => $row[5],
+			'image'       => $row[6],
 		);
 	}
 
@@ -309,6 +313,7 @@ function _get_random_quotes()
 		quote,
 		create_time AT TIME ZONE 'America/Vancouver',
 		added_by,
+		title,
 		image,
 		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
@@ -337,6 +342,7 @@ function _get_quotes($page, $page_size)
 		quote,
 		create_time AT TIME ZONE 'America/Vancouver',
 		added_by,
+		title,
 		image,
 		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
@@ -368,6 +374,7 @@ function _get_quote_by_id($id)
 		quote,
 		create_time AT TIME ZONE 'America/Vancouver',
 		added_by,
+		title,
 		image,
 		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
@@ -399,6 +406,7 @@ function _get_latest_quotes()
 		quote,
 		create_time AT TIME ZONE 'America/Vancouver',
 		added_by,
+		title,
 		image,
 		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
@@ -422,6 +430,7 @@ function _get_latest_quotes_by_id()
 		quote,
 		create_time AT TIME ZONE 'America/Vancouver',
 		added_by,
+		title,
 		image,
 		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
@@ -447,6 +456,7 @@ function _get_quotes_missing_adder()
 		quote,
 		create_time AT TIME ZONE 'America/Vancouver',
 		added_by,
+		title,
 		image,
 		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
@@ -472,6 +482,7 @@ function _get_quotes_missing_date()
 		quote,
 		create_time AT TIME ZONE 'America/Vancouver',
 		added_by,
+		title,
 		image,
 		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
@@ -572,6 +583,7 @@ function _search_quotes($query, $page, $page_size)
 		quote,
 		create_time AT TIME ZONE 'America/Vancouver',
 		added_by,
+		title,
 		image,
 		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
@@ -674,9 +686,10 @@ function _db_fetch_quotes($sql, $params)
 			'quote'        => $row[1],
 			'create_time'  => $row[2],
 			'added_by'     => $row[3],
-			'image'        => $row[4],
-			'update_time'  => $row[5],
-			'update_notes' => $row[6],
+			'title'        => $row[4],
+			'image'        => $row[5],
+			'update_time'  => $row[6],
+			'update_notes' => $row[7],
 		);
 	}
 
