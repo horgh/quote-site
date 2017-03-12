@@ -26,11 +26,7 @@
 
 		<div class="create_time">
 			Date:
-			<?php if ($quote['create_time'] === null): ?>
-				Missing
-			<?php else: ?>
-				<?= htmlspecialchars($quote['create_time']); ?> (Vancouver)
-			<?php endif; ?>
+			<?= htmlspecialchars(_quote_time_to_string($quote['create_time'])); ?>
 		</div>
 
 		<div class="quote_text">

@@ -264,7 +264,7 @@ function _get_popular_quotes($page, $page_size)
 		COUNT(*) AS count,
 		q.id AS quote_id,
 		q.quote AS quote,
-		q.create_time AT TIME ZONE 'America/Vancouver',
+		EXTRACT(EPOCH FROM q.create_time),
 		q.added_by,
 		q.title,
 		q.image
@@ -310,11 +310,16 @@ function _get_popular_quotes($page, $page_size)
 
 	$quotes = array();
 	foreach ($rows as $row) {
+		$create_time = $row[3];
+		if (null !== $create_time) {
+			$create_time = intval($create_time);
+		}
+
 		$quotes[] = array(
 			'count'       => intval($row[0]),
 			'id'          => intval($row[1]),
 			'quote'       => $row[2],
-			'create_time' => $row[3],
+			'create_time' => $create_time,
 			'added_by'    => $row[4],
 			'title'       => $row[5],
 			'image'       => $row[6],
@@ -363,11 +368,10 @@ function _get_random_quotes()
 		SELECT
 		id,
 		quote,
-		create_time AT TIME ZONE 'America/Vancouver',
+		EXTRACT(EPOCH FROM create_time),
 		added_by,
 		title,
 		image,
-		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
 		FROM quote
 		WHERE sensitive = false
@@ -392,11 +396,10 @@ function _get_quotes($page, $page_size)
 		SELECT
 		id,
 		quote,
-		create_time AT TIME ZONE 'America/Vancouver',
+		EXTRACT(EPOCH FROM create_time),
 		added_by,
 		title,
 		image,
-		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
 		FROM quote
 		WHERE sensitive = false
@@ -424,18 +427,19 @@ function _get_quote_by_id($id)
 		SELECT
 		id,
 		quote,
-		create_time AT TIME ZONE 'America/Vancouver',
+		EXTRACT(EPOCH FROM create_time),
 		added_by,
 		title,
 		image,
-		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
 		FROM quote
 		WHERE id = ?
 		AND sensitive = false
 	";
 
-	$params = array($id);
+	$params = array(
+		$id,
+	);
 
 	$quotes = _db_fetch_quotes($sql, $params);
 	if (false === $quotes) {
@@ -455,11 +459,10 @@ function _get_latest_quotes()
 		SELECT
 		id,
 		quote,
-		create_time AT TIME ZONE 'America/Vancouver',
+		EXTRACT(EPOCH FROM create_time),
 		added_by,
 		title,
 		image,
-		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
 		FROM quote
 		WHERE create_time IS NOT NULL
@@ -479,11 +482,10 @@ function _get_latest_quotes_by_id()
 		SELECT
 		id,
 		quote,
-		create_time AT TIME ZONE 'America/Vancouver',
+		EXTRACT(EPOCH FROM create_time),
 		added_by,
 		title,
 		image,
-		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
 		FROM quote
 		WHERE create_time IS NOT NULL
@@ -505,11 +507,10 @@ function _get_quotes_missing_adder()
 		SELECT
 		id,
 		quote,
-		create_time AT TIME ZONE 'America/Vancouver',
+		EXTRACT(EPOCH FROM create_time),
 		added_by,
 		title,
 		image,
-		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
 		FROM quote
 		WHERE added_by IS NULL
@@ -531,11 +532,10 @@ function _get_quotes_missing_date()
 		SELECT
 		id,
 		quote,
-		create_time AT TIME ZONE 'America/Vancouver',
+		EXTRACT(EPOCH FROM create_time),
 		added_by,
 		title,
 		image,
-		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
 		FROM quote
 		WHERE create_time IS NULL
@@ -632,11 +632,10 @@ function _search_quotes($query, $page, $page_size)
 		SELECT
 		id,
 		quote,
-		create_time AT TIME ZONE 'America/Vancouver',
+		EXTRACT(EPOCH FROM create_time),
 		added_by,
 		title,
 		image,
-		update_time AT TIME ZONE 'America/Vancouver',
 		update_notes
 		FROM quote
 		WHERE quote ILIKE ?
@@ -732,15 +731,19 @@ function _db_fetch_quotes($sql, $params)
 
 	$quotes = array();
 	foreach ($rows as $row) {
+		$create_time = $row[2];
+		if (null !== $create_time) {
+			$create_time = intval($create_time);
+		}
+
 		$quotes[] = array(
 			'id'           => intval($row[0]),
 			'quote'        => $row[1],
-			'create_time'  => $row[2],
+			'create_time'  => $create_time,
 			'added_by'     => $row[3],
 			'title'        => $row[4],
 			'image'        => $row[5],
-			'update_time'  => $row[6],
-			'update_notes' => $row[7],
+			'update_notes' => $row[6],
 		);
 	}
 

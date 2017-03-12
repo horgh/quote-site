@@ -15,6 +15,7 @@ $NOTIFY_BIN = '/usr/local/bin/ircnotify';
 // Where we store images associated with quotes.
 $IMAGES_DIR = 'quoteimages';
 
+// Max image filesize we permit.
 $IMAGE_MAX_SIZE = 5*1024*1024;
 
 // Title shown prominently on the site.

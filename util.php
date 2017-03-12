@@ -361,3 +361,12 @@ function _get_image_upload()
 
 	return $dest_path;
 }
+
+function _quote_time_to_string($unixtime)
+{
+	if (null === $unixtime) {
+		return 'Missing';
+	}
+
+	return date('Y-m-d H:i:s O', $unixtime);
+}

@@ -1,6 +1,6 @@
 # Summary
 This is a website for displaying quotes. The quotes come from IRC. It's sort of
-a personal version of [bash.org](http://bash.org) for a few friends.
+a version of [bash.org](http://bash.org) for a few friends.
 
 It is not the prettiest code but it does its job. I started it as a quick hack
 and it has grown to encompass more functionality. Typically I add features
@@ -32,7 +32,6 @@ The site has several features:
 ## Gotchas
 Some things to keep in mind:
 
-  * Currently we alway display quotes in the America/Vancouver timezone
   * Error handling is pretty raw. For example if you have a database query
     problem, it's likely the page will get pretty ugly.
 
