@@ -522,7 +522,7 @@ function _request_download()
 
 // Search quotes.
 //
-// Right now we can search only in the quote body.
+// We search in the quote body and in its title.
 function _request_search()
 {
 	$query = '';

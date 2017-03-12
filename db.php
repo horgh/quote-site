@@ -637,13 +637,13 @@ function _search_quotes($query, $page, $page_size)
 		image,
 		update_notes
 		FROM quote
-		WHERE quote ILIKE ?
-		AND sensitive = false
+		WHERE (quote ILIKE ? OR title ILIKE ?) AND
+		sensitive = false
 		ORDER BY 1 DESC
 		LIMIT ? OFFSET ?
 	";
 
-	$params = array($query, $page_size, $offset);
+	$params = array($query, $query, $page_size, $offset);
 
 	$quotes = _db_fetch_quotes($sql, $params);
 
@@ -662,11 +662,11 @@ function _count_matching_quotes($query)
 	$sql = "
 		SELECT COUNT(1)
 		FROM quote
-		WHERE quote ILIKE ?
-		AND sensitive = false
+		WHERE (quote ILIKE ? OR title ILIKE ?) AND
+		sensitive = false
 	";
 
-	$params = array($query);
+	$params = array($query, $query);
 
 	$dbh = _connect_to_database();
 	if (!$dbh) {
