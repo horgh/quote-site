@@ -3,8 +3,8 @@
 			<a href="index.php?action=view-quote&amp;id=<?= htmlspecialchars(rawurlencode($quote['id'])); ?>"
 				>Quote #<?= htmlspecialchars($quote['id']); ?></a>
 
-			<a href="index.php?action=view-edit-quote&amp;id=<?= htmlspecialchars(rawurlencode($quote['id'])); ?>"
-				>(edit)</a>
+			(<a href="index.php?action=view-edit-quote&amp;id=<?= htmlspecialchars(rawurlencode($quote['id'])); ?>"
+				>edit</a>)
 		</div>
 
 		<div class="title">
