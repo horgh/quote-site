@@ -639,7 +639,7 @@ function _search_quotes($query, $page, $page_size)
 		FROM quote
 		WHERE (quote ILIKE ? OR title ILIKE ?) AND
 		sensitive = false
-		ORDER BY 1 DESC
+		ORDER BY COALESCE(create_time, '1970-01-01') ASC, id ASC
 		LIMIT ? OFFSET ?
 	";
 
