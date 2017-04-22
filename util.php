@@ -370,3 +370,21 @@ function _quote_time_to_string($unixtime)
 
 	return date('Y-m-d H:i:s O', $unixtime);
 }
+
+function _send_json_response($http_code, $array)
+{
+	if (!is_int($http_code) || !is_array($array)) {
+		header('Content-Type: application/json', true, 500);
+		echo '{"errors": ["Invalid parameter given to generate response."]}';
+	}
+
+	$json = json_encode($array);
+	if (false === $json) {
+		header('Content-Type: application/json', true, 500);
+		echo '{"errors": ["Unable to generate JSON."]}';
+		return;
+	}
+
+	header('Content-Type: application/json', true, $http_code);
+	echo $json;
+}

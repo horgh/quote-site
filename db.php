@@ -35,7 +35,8 @@ function _connect_to_database()
  * @param string $title Title.
  * @param string $quote_image Optional. Path to image.
  *
- * @return bool success
+ * Returns mixed. Either an array with the quote record that was added, or
+ * boolean false if there was a failure.
  */
 function _add_quote($quote, $added_by, $title, $quote_image)
 {
@@ -47,7 +48,13 @@ function _add_quote($quote, $added_by, $title, $quote_image)
 
 	$dbh = _connect_to_database();
 
-	$sql = "INSERT INTO quote (quote, added_by, title, image) VALUES(?, ?, ?, ?)";
+	$sql = '
+INSERT INTO quote
+(quote, added_by, title, image)
+VALUES(?, ?, ?, ?)
+RETURNING id
+';
+
 	$params = array(
 		$quote,
 		$added_by,
@@ -72,7 +79,30 @@ function _add_quote($quote, $added_by, $title, $quote_image)
 		return false;
 	}
 
-	return true;
+	// We get back the quote ID. Look up the quote.
+
+	$rows = $sth->fetchAll(PDO::FETCH_NUM);
+	if (false === $rows) {
+		_log_message('error', 'Unable to fetch rows after insert.');
+		return false;
+	}
+
+	if (count($rows) !== 1) {
+		_log_message('error', 'Unexpected number of rows returned: ' . count($rows));
+		return false;
+	}
+
+	if (count($rows[0]) !== 1) {
+		_log_message('error', 'Unexpected number of columns in returned row: ' . count($rows[0]));
+		return false;
+	}
+
+	if (!is_numeric($rows[0][0])) {
+		_log_message('error', 'Unexpected ID column value, not numeric: ' . $rows[0][0]);
+		return false;
+	}
+
+	return _get_quote_by_id(intval($rows[0][0]));
 }
 
 // Save the quote into the database.
