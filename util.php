@@ -337,7 +337,7 @@ function _get_image_from_form_post()
 }
 
 // Given image data in a binary string, validate it as an image and save it on
-// disk with a random name.
+// disk.
 function _validate_and_save_image($buf) {
 	try {
 		$image = new Imagick();
@@ -364,12 +364,13 @@ function _validate_and_save_image($buf) {
 		return array('error' => 'Invalid image format. Please use PNG/JPG/GIF.');
 	}
 
-	$id = uniqid('quote-', true);
+	$hash = sha1($image->getImageBlob());
 
 	global $IMAGES_DIR;
-	$dest_path = $IMAGES_DIR . '/' . $id . $suffix;
+	$dest_path = $IMAGES_DIR . '/' . $hash . $suffix;
+
 	if (file_exists($dest_path)) {
-		return array('error' => 'Filename collision.');
+		return $dest_path;
 	}
 
 	if (file_put_contents($dest_path, $image->getImageBlob()) === false) {
