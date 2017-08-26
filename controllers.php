@@ -41,7 +41,7 @@ function _request_add_quote()
 	$quote_image = '';
 	if (array_key_exists('quote_image', $_FILES) &&
 		$_FILES['quote_image']['size'] > 0) {
-		$quote_image = _get_image_upload();
+		$quote_image = _get_image_from_form_post();
 		if (false === $quote_image) {
 			_save_in_session('added_by', $added_by);
 			_save_in_session('title', $title);

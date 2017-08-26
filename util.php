@@ -305,7 +305,7 @@ function _session_start()
 //
 // Validate it and store it somewhere persistently. Return path to it. This path
 // is HTTP accessible as well as a disk path.
-function _get_image_upload()
+function _get_image_from_form_post()
 {
 	if (!array_key_exists('quote_image', $_FILES) ||
 		!is_array($_FILES['quote_image'])) {
@@ -321,11 +321,31 @@ function _get_image_upload()
 		return false;
 	}
 
-	try {
-		$image = new Imagick($file['tmp_name']);
-	} catch (Exception $e) {
-		_add_flash_error("Invalid image.");
+	$buf = file_get_contents($file['tmp_name']);
+	if ($buf === false) {
+		_add_flash_error('Unable to read image.');
 		return false;
+	}
+
+	$path = _validate_and_save_image($buf);
+	if (is_array($path)) {
+		_add_flash_error($path['error']);
+		return false;
+	}
+
+	return $path;
+}
+
+// Given image data in a binary string, validate it as an image and save it on
+// disk with a random name.
+function _validate_and_save_image($buf) {
+	try {
+		$image = new Imagick();
+		if (!$image->readImageBlob($buf)) {
+			return array('error' => 'Invalid image.');
+		}
+	} catch (Exception $e) {
+		return array('error' => 'Invalid image.');
 	}
 
 	$suffix = '';
@@ -341,8 +361,7 @@ function _get_image_upload()
 		$suffix = '.gif';
 		break;
 	default:
-		_add_flash_error("Invalid image format. Please use PNG/JPG/GIF.");
-		return false;
+		return array('error' => 'Invalid image format. Please use PNG/JPG/GIF.');
 	}
 
 	$id = uniqid('quote-', true);
@@ -350,13 +369,11 @@ function _get_image_upload()
 	global $IMAGES_DIR;
 	$dest_path = $IMAGES_DIR . '/' . $id . $suffix;
 	if (file_exists($dest_path)) {
-		_add_flash_error("Filename collision.");
-		return false;
+		return array('error' => 'Filename collision.');
 	}
 
-	if (!move_uploaded_file($file['tmp_name'], $dest_path)) {
-		_add_flash_error("Unable to save image.");
-		return false;
+	if (file_put_contents($dest_path, $image->getImageBlob()) === false) {
+		return array('error' => 'Unable to save image.');
 	}
 
 	return $dest_path;
