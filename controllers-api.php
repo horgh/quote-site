@@ -28,7 +28,8 @@ function _api_add_quote()
 	// Pull out parameters.
 
 	$added_by = '';
-	if (array_key_exists('added_by', $payload) && is_string($payload['added_by'])) {
+	if (array_key_exists('added_by', $payload) &&
+		is_string($payload['added_by'])) {
 		$added_by = trim($payload['added_by']);
 	}
 
@@ -42,8 +43,11 @@ function _api_add_quote()
 		$quote = trim($payload['quote']);
 	}
 
-	// TODO(horgh): Support quote_image
-	$quote_image = '';
+	$image_base64 = '';
+	if (array_key_exists('image', $payload) && is_string($payload['image']) &&
+		strlen($payload['image']) > 0) {
+		$image_base64 = $payload['image'];
+	}
 
 
 	// Validate them.
@@ -67,15 +71,33 @@ function _api_add_quote()
 		}
 	}
 
+	$image_path = '';
+	if (strlen($image_base64) > 0) {
+		$buf = base64_decode($image_base64, true);
+		if ($buf === false) {
+			$errors[] = 'Unable to decode the image.';
+		} else {
+			$path = _validate_and_save_image($buf);
+			if (is_array($path)) {
+				$errors[] = $path['error'];
+			} else {
+				$image_path = $path;
+			}
+		}
+	}
+
 	if (count($errors) !== 0) {
 		_send_json_response(400, array('errors' => $errors));
+		if (strlen($image_path) > 0) {
+			unlink($image_path);
+		}
 		return;
 	}
 
 
 	// Add it.
 
-	$record = _add_quote($quote, $added_by, $title, $quote_image);
+	$record = _add_quote($quote, $added_by, $title, $image_path);
 	if (false === $record) {
 		_send_json_response(400, array('errors' => 'Failed to add the quote to the database.'));
 		return;
