@@ -578,7 +578,7 @@ function _request_search()
 		return;
 	}
 
-	$total_pages = ceil($count/$page_size);
+	$total_pages = intval(ceil($count/$page_size));
 
 	$prev_page_url= 'index.php?action=search&query=' . rawurlencode($query)
 		. '&page=' . ($page-1);
