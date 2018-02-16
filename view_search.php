@@ -10,7 +10,7 @@
 <?php if (strlen($query) > 0): ?>
 	<h2>Quotes matching *<?= htmlspecialchars($query); ?>*:</h2>
 
-	<?php if (1 === $count): ?>
+	<?php if ($count === 1): ?>
 	<p>There is <?= $count; ?> matching quote.</p>
 	<?php else: ?>
 	<p>There are <?= $count; ?> matching quotes.</p>
