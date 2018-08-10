@@ -454,7 +454,7 @@ function _request_edit_quote()
 	}
 
 	_add_flash_success("Quote updated.");
-	_notify_to_irc("$editor updated quote #$id.");
+	_notify_to_irc("$editor edited quote #$id.");
 	_redirect('index.php', array('action' => 'view-edit-quote', 'id' => $id));
 }
 
