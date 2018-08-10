@@ -113,7 +113,7 @@ RETURNING id
 function _update_quote($quote, $editor, $title, $text)
 {
 	if (!is_array($quote) || strlen($editor) === 0 || strlen($title) === 0 ||
-		strlen($quote) === 0) {
+		strlen($text) === 0) {
 		_log_message('error', "Invalid parameter");
 		return false;
 	}
