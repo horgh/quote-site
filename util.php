@@ -26,12 +26,11 @@ function _log_message($level, $msg)
 //! clean up a quote
 /*!
  * @param string $quote
+ * @param bool $remove_timestamps Try to remove timestamps if true.
  *
  * @return mixed string quote or bool false
- *
- * we try to trim timestamps from the quote
  */
-function _clean_quote($quote)
+function _clean_quote($quote, $remove_timestamps)
 {
 	if (strlen($quote) === 0) {
 		_log_message('error', "invalid parameter");
@@ -50,15 +49,15 @@ function _clean_quote($quote)
 	foreach ($lines as $line) {
 		_log_message('debug', "looking at line: $line");
 
-		// trim timestamps.
-		foreach ($timestamps as $timestamp) {
-			if (($line = preg_replace($timestamp, '', $line)) === null) {
-				_log_message('error', "failure replacing timestamp. pattern: $timestamp");
-				return false;
+		if ($remove_timestamps) {
+			foreach ($timestamps as $timestamp) {
+				if (($line = preg_replace($timestamp, '', $line)) === null) {
+					_log_message('error', "failure replacing timestamp. pattern: $timestamp");
+					return false;
+				}
 			}
 		}
 
-		// trim any start/end whitespace.
 		$line = trim($line);
 
 		if (strlen($line) === 0) {

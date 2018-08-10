@@ -119,7 +119,7 @@ function _request_add_quote()
 
 	// We're not saving the quote yet. Clean it up a bit and re-display.
 
-	$quote_clean = _clean_quote($quote);
+	$quote_clean = _clean_quote($quote, true);
 	if (false === $quote_clean) {
 		_add_flash_error('Failure cleaning up the quote.');
 		_save_in_session('added_by', $added_by);
