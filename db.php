@@ -110,27 +110,32 @@ RETURNING id
 // Right now the only field we support updating is the title.
 //
 // We expect you've checked the update is sane by this point.
-function _update_quote($quote, $editor, $title)
+function _update_quote($quote, $editor, $title, $text)
 {
-	if (!is_array($quote) || strlen($editor) === 0 || strlen($title) === 0) {
+	if (!is_array($quote) || strlen($editor) === 0 || strlen($title) === 0 ||
+		strlen($quote) === 0) {
 		_log_message('error', "Invalid parameter");
 		return false;
 	}
 
-	$update_message = date('Y-m-d H:i:s O') . ": $editor changed title from " .
-		$quote['title'] . " to " . $title;
+	$now = date('Y-m-d H:i:s O');
 
-	$update_notes = '';
+	$updates = array();
 	if (strlen($quote['update_notes']) > 0) {
-		$update_notes = $quote['update_notes'] . "\n" . $update_message;
-	} else {
-		$update_notes = $update_message;
+		$updates[] = $quote['update_notes'];
+	}
+	if ($title !== $quote['title']) {
+		$updates[] = "$now: $editor changed title from " . $quote['title'] . ' to ' . $title;
+	}
+	if ($text !== $quote['quote']) {
+		$updates[] = "$now: $editor changed quote from " . $quote['quote'] . ' to ' . $text;
 	}
 
-	$sql = 'UPDATE quote SET title = ?, update_notes = ? WHERE id = ?';
+	$sql = 'UPDATE quote SET title = ?, update_notes = ?, quote = ? WHERE id = ?';
 	$params = array(
 		$title,
-		$update_notes,
+		implode("\n", $updates),
+		$text,
 		$quote['id'],
 	);
 

@@ -43,9 +43,8 @@
 		<?= htmlspecialchars(_quote_time_to_string($quote['create_time'])); ?>
 	</div>
 
-	<div class="quote_text">
-		<?= nl2br(htmlspecialchars($quote['quote'])); ?>
-	</div>
+	<textarea name="quote" cols="90" rows="20" required
+		><?= htmlspecialchars($quote['quote']); ?></textarea>
 
 	<?php if (strlen($quote['image']) > 0): ?>
 		<img src="<?= htmlspecialchars($quote['image']); ?>" class="quote_image">

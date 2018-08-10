@@ -405,6 +405,11 @@ function _request_edit_quote()
 		$title = trim($_POST['title']);
 	}
 
+	$quote_text = '';
+	if (array_key_exists('quote', $_POST) && is_string($_POST['quote'])) {
+		$quote_text = _clean_quote($_POST['quote'], false);
+	}
+
 	$editor = '';
 	if (array_key_exists('editor', $_POST) && is_string($_POST['editor'])) {
 		$editor = trim($_POST['editor']);
@@ -432,12 +437,16 @@ function _request_edit_quote()
 		return;
 	}
 
+	if (strlen($quote_text) === 0) {
+		_add_flash_error('Quote must not be blank.');
+		_redirect('index.php', array('action' => 'view-edit-quote', 'id' => $id));
+		return;
+	}
+
 
 	// Does this actually change anything?
 
-	// Right now we only support changing the quote's title.
-
-	if ($quote['title'] === $title) {
+	if ($quote['title'] === $title && $quote['quote'] === $quote_text) {
 		_add_flash_error("No change.");
 		_save_in_session('editor', $editor);
 		_redirect('index.php', array('action' => 'view-edit-quote', 'id' => $id));
@@ -446,7 +455,7 @@ function _request_edit_quote()
 
 
 	// Make the change.
-	if (!_update_quote($quote, $editor, $title)) {
+	if (!_update_quote($quote, $editor, $title, $quote_text)) {
 		_add_flash_error("Unable to update quote.");
 		_save_in_session('editor', $editor);
 		_redirect('index.php', array('action' => 'view-edit-quote', 'id' => $id));
